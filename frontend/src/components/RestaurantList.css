@@ -1,0 +1,30 @@
+.restaurant-list {
+  margin: 2rem 0;
+}
+
+.restaurant-list h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.results-count {
+  text-align: center;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.restaurant-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 0 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .restaurant-cards {
+    grid-template-columns: 1fr;
+  }
+}
