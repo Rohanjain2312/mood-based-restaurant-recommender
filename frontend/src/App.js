@@ -3,7 +3,7 @@ import './App.css';
 import MoodSelector from './components/MoodSelector';
 import RestaurantList from './components/RestaurantList';
 import MapView from './components/MapView';
-import { getRecommendations } from './services/api';
+import { getRecommendations } from './components/api';
 
 function App() {
   const [selectedMood, setSelectedMood] = useState('');
@@ -18,10 +18,10 @@ function App() {
         (position) => {
           setLocation({
             latitude: position.coords.latitude,
-            longitude: position.coords.longitude
+            longitude: position.coords.longitude,
           });
         },
-        (error) => {
+        () => {
           setError('Unable to get your location. Please enable location services.');
         }
       );
@@ -50,7 +50,7 @@ function App() {
         longitude: location.longitude,
         mood: selectedMood,
         radius: 3000,
-        max_results: 10
+        max_results: 10,
       });
 
       setRestaurants(data.restaurants);
@@ -99,7 +99,7 @@ function App() {
             <MapView
               center={{
                 lat: location.latitude,
-                lng: location.longitude
+                lng: location.longitude,
               }}
               restaurants={restaurants}
             />
@@ -113,7 +113,7 @@ function App() {
 
       <footer className="App-footer">
         <p>Built with React, FastAPI, and DistilBERT</p>
-        
+        <a
           href="https://github.com/Rohanjain2312/mood-based-restaurant-recommender"
           target="_blank"
           rel="noopener noreferrer"

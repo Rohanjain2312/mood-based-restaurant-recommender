@@ -21,8 +21,7 @@ class Config:
     MIN_REVIEWS = 3
     
     # Mood categories
-    MOODS = ['work', 'date', 'quick_bite', 'budget', 'family', 'late_night', 'celebration']
-    
+    MOODS = ['celebration', 'date', 'quick_bite', 'budget']    
     # Request limits
     MAX_NEARBY_RESTAURANTS = 30
     DEFAULT_RADIUS = 3000

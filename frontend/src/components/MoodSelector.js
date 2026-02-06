@@ -2,13 +2,10 @@ import React from 'react';
 import './MoodSelector.css';
 
 const MOODS = [
-  { value: 'work', label: 'Work', icon: '💼', description: 'Quiet, WiFi, laptop-friendly' },
+  { value: 'celebration', label: 'Celebration', icon: '🎉', description: 'Special occasions, upscale' },
   { value: 'date', label: 'Date', icon: '❤️', description: 'Romantic, intimate atmosphere' },
   { value: 'quick_bite', label: 'Quick Bite', icon: '⚡', description: 'Fast service, casual' },
-  { value: 'budget', label: 'Budget', icon: '💰', description: 'Affordable, good value' },
-  { value: 'family', label: 'Family', icon: '👨‍👩‍👧‍👦', description: 'Kid-friendly, spacious' },
-  { value: 'late_night', label: 'Late Night', icon: '🌙', description: 'Open late, after-hours' },
-  { value: 'celebration', label: 'Celebration', icon: '🎉', description: 'Special occasions, upscale' }
+  { value: 'budget', label: 'Budget', icon: '💰', description: 'Affordable, good value' }
 ];
 
 function MoodSelector({ selectedMood, onMoodSelect }) {

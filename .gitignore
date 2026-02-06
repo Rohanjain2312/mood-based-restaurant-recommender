@@ -43,7 +43,7 @@ env/
 
 # Data files
 data/raw/*.json
-data/labeled/*.json
+#data/labeled/*.json
 
 # Model files
 models/distilbert-mood-classifier/

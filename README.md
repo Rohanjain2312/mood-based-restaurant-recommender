@@ -145,15 +145,12 @@ Open `notebooks/02_model_training.ipynb` in Google Colab:
 
 | Mood | Precision | Recall | F1-Score |
 |------|-----------|--------|----------|
-| work | TBD | TBD | TBD |
-| date | TBD | TBD | TBD |
-| quick_bite | TBD | TBD | TBD |
-| budget | TBD | TBD | TBD |
-| family | TBD | TBD | TBD |
-| late_night | TBD | TBD | TBD |
-| celebration | TBD | TBD | TBD |
+| celebration | 1.00 | 0.83 | 0.91 |
+| quick_bite | 0.70 | 0.88 | 0.78 |
+| date | 0.78 | 0.47 | 0.58 |
+| budget | 0.40 | 0.57 | 0.47 |
 
-**Overall:** Macro F1 = TBD | Micro F1 = TBD
+**Overall:** Macro F1 = 0.69 | Micro F1 = 0.75
 
 ## API Documentation
 
