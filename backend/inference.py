@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from typing import List, Dict
 import os
 
@@ -8,16 +8,15 @@ class MoodClassifier:
     """
     Wrapper class for mood classification inference
     """
-    
     def __init__(self, model_path: str, device: str = None):
         """
         Initialize classifier with trained model
         
         Args:
-            model_path: Path to saved model directory
+            model_path: Path to saved model directory or HuggingFace model ID
             device: 'cuda', 'cpu', or None (auto-detect)
         """
-        self.moods = ['date', 'quick_bite', 'budget', 'celebration']
+        self.moods = ['celebration', 'date', 'quick_bite', 'budget']
         self.num_labels = len(self.moods)
         
         # Set device
@@ -26,9 +25,9 @@ class MoodClassifier:
         else:
             self.device = torch.device(device)
         
-        # Load tokenizer and model
-        self.tokenizer = DistilBertTokenizer.from_pretrained(model_path)
-        self.model = DistilBertForSequenceClassification.from_pretrained(model_path)
+        # Load tokenizer and model from HuggingFace or local path
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+        self.model = AutoModelForSequenceClassification.from_pretrained(model_path)
         self.model.to(self.device)
         self.model.eval()
         
@@ -137,13 +136,10 @@ class MoodClassifier:
         
         return round(mood_score, 2)
 
-def load_classifier(model_path: str = 'models/distilbert-mood-classifier') -> MoodClassifier:
+def load_classifier(model_path: str = 'rohanjain2312/distilbert-mood-classifier') -> MoodClassifier:
     """
     Convenience function to load classifier
     """
-    if not os.path.exists(model_path):
-        raise FileNotFoundError(f"Model not found at {model_path}")
-    
     return MoodClassifier(model_path)
 
 if __name__ == "__main__":

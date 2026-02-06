@@ -31,16 +31,16 @@ async def startup_event():
     """Load model at startup"""
     global classifier
     try:
-        model_path = 'models/distilbert-mood-classifier'
-        if os.path.exists(model_path):
-            classifier = MoodClassifier(model_path)
-            print(f"Model loaded successfully from {model_path}")
-        else:
-            print(f"Warning: Model not found at {model_path}. Using placeholder scoring.")
+        # Load from HuggingFace instead of local path
+        model_path = 'rohanjain2312/distilbert-mood-classifier'
+        print(f"Attempting to load model from: {model_path}")
+        classifier = MoodClassifier(model_path)
+        print(f"Model loaded successfully from HuggingFace: {model_path}")
     except Exception as e:
+        import traceback
+        print(f"Full error traceback:")
+        traceback.print_exc()
         print(f"Warning: Could not load model: {e}. Using placeholder scoring.")
-
-# Request and response models
 class RecommendationRequest(BaseModel):
     latitude: float
     longitude: float
