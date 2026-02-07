@@ -135,27 +135,3 @@ class MoodClassifier:
         mood_score = avg_prob * 10
         
         return round(mood_score, 2)
-
-def load_classifier(model_path: str = 'rohanjain2312/distilbert-mood-classifier') -> MoodClassifier:
-    """
-    Convenience function to load classifier
-    """
-    return MoodClassifier(model_path)
-
-if __name__ == "__main__":
-    # Test inference
-    classifier = load_classifier()
-    
-    test_reviews = [
-        "Great place to work on my laptop. Fast WiFi and plenty of outlets.",
-        "Perfect romantic dinner spot. Dim lighting and intimate atmosphere.",
-        "Quick service, got my food in 5 minutes. Perfect for lunch break."
-    ]
-    
-    print("Testing inference...")
-    for review in test_reviews:
-        result = classifier.predict_single(review)
-        print(f"\nReview: {review[:50]}...")
-        print("Mood probabilities:")
-        for mood, prob in sorted(result.items(), key=lambda x: x[1], reverse=True):
-            print(f"  {mood}: {prob:.3f}")
