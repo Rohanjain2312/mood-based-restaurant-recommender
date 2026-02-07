@@ -6,7 +6,7 @@ from inference import MoodClassifier
 # Load model from HuggingFace
 classifier = MoodClassifier('rohanjain2312/distilbert-mood-classifier')
 
-# Get API key from environment (will be set in HF Spaces secrets)
+# Get API key from environment
 GOOGLE_PLACES_API_KEY = os.getenv('GOOGLE_PLACES_API_KEY', 'AIzaSyDtUbq6CIdbaTtKjEW9RXeC2tyWAFYIGfI')
 
 def get_recommendations(latitude, longitude, mood):
@@ -90,20 +90,16 @@ with gr.Blocks(title="Mood-Based Restaurant Recommender") as demo:
     # 🍽️ Mood-Based Restaurant Recommender
     
     Find restaurants that match your mood using AI-powered review analysis.
-    
-    **How it works:** Enter your location coordinates and select a mood. The app analyzes restaurant reviews 
-    using a fine-tuned DistilBERT model to find places that match your vibe.
     """)
     
     with gr.Row():
         with gr.Column():
-            latitude = gr.Number(label="Latitude", value=40.7580, info="New York: 40.7580, LA: 34.0522, SF: 37.7749")
-            longitude = gr.Number(label="Longitude", value=-73.9855, info="New York: -73.9855, LA: -118.2437, SF: -122.4194")
+            latitude = gr.Number(label="Latitude", value=40.7580)
+            longitude = gr.Number(label="Longitude", value=-73.9855)
             mood = gr.Radio(
                 ["celebration", "date", "quick_bite", "budget"],
                 label="Select Your Mood",
-                value="date",
-                info="What kind of dining experience are you looking for?"
+                value="date"
             )
             submit_btn = gr.Button("Find Restaurants", variant="primary")
         
@@ -115,17 +111,6 @@ with gr.Blocks(title="Mood-Based Restaurant Recommender") as demo:
         inputs=[latitude, longitude, mood],
         outputs=output
     )
-    
-    gr.Markdown("""
-    ### About
-    - **Model:** Fine-tuned DistilBERT (0.69 F1 macro across 4 moods)
-    - **Data:** Trained on 227 restaurant reviews with synthetic labeling
-    - **Tech Stack:** PyTorch, Transformers, Gradio, Google Places API
-    
-    [GitHub](https://github.com/Rohanjain2312/mood-based-restaurant-recommender) | 
-    [Model Card](https://huggingface.co/rohanjain2312/distilbert-mood-classifier)
-    """)
 
 if __name__ == "__main__":
     demo.launch()
-    
