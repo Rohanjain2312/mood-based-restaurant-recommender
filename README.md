@@ -1,259 +1,213 @@
 # Mood-Based Restaurant Recommender
 
-An intelligent restaurant recommendation system that uses NLP to classify restaurant reviews by mood and provides personalized suggestions based on user preferences.
+A machine learning application that analyzes restaurant reviews to recommend venues matching specific dining moods using a fine-tuned DistilBERT model.
 
-## Features
+**Live Demo**: [HuggingFace Spaces](https://huggingface.co/spaces/rohanjain2312/restaurant-mood-recommender)
 
-- Multi-label mood classification (work, date, quick_bite, budget, family, late_night, celebration)
-- Fine-tuned DistilBERT model on 1000+ restaurant reviews
-- Real-time restaurant discovery using Google Places API
-- Review aggregation and mood scoring (0-10 scale)
-- RESTful API backend with FastAPI
-- Interactive React frontend with Google Maps integration
+## Overview
 
-## Tech Stack
+This project addresses the challenge of finding restaurants that match specific dining intentions beyond traditional filters like cuisine or price. By fine-tuning a DistilBERT model on restaurant reviews, the system can identify venues suitable for celebrations, romantic dates, quick meals, or budget-friendly dining.
 
-**Machine Learning:**
-- PyTorch
-- Transformers (DistilBERT)
-- Scikit-learn
-- Groq API (synthetic labeling)
+## Key Features
 
-**Backend:**
-- FastAPI
-- Python 3.8+
-- Google Places API
+- Multi-label text classification across 4 mood categories
+- Real-time restaurant discovery via Google Places API
+- Review-based scoring system (0-10 scale) using ML inference
+- Support for 30 major cities worldwide
+- Interactive web interface built with Gradio
 
-**Frontend:**
-- React
-- Google Maps JavaScript API
-- Axios
+## Model Performance
 
-**Deployment:**
-- Heroku/Railway (backend)
-- Vercel/Netlify (frontend)
-- HuggingFace Hub (model hosting)
+The model was trained on 227 labeled restaurant reviews and evaluated on a held-out test set:
 
-## Project Structure
+| Mood Category | Precision | Recall | F1-Score |
+|--------------|-----------|--------|----------|
+| Celebration  | 1.00      | 0.83   | 0.91     |
+| Quick Bite   | 0.70      | 0.88   | 0.78     |
+| Date         | 0.78      | 0.47   | 0.58     |
+| Budget       | 0.40      | 0.57   | 0.47     |
+
+**Overall Metrics**: Macro F1 = 0.69 | Micro F1 = 0.75
+
+## Technical Architecture
+
+### Data Pipeline
+1. **Collection**: Google Places API scraping across 5 US cities (NYC, LA, SF, Boston, Seattle)
+2. **Labeling**: Synthetic labeling using Groq's Llama 3.1 API with confidence thresholding
+3. **Processing**: Multi-label binary encoding for 4 mood categories
+
+### Model Training
+- **Base Model**: DistilBERT (distilbert-base-uncased)
+- **Task**: Multi-label sequence classification
+- **Training Time**: 48 minutes on Google Colab (T4 GPU)
+- **Hyperparameters**:
+  - Learning rate: 2e-5 with linear warmup (100 steps)
+  - Batch size: 16
+  - Epochs: 4 with early stopping (patience=2)
+  - Loss function: BCEWithLogitsLoss with class weights
+  - Optimizer: AdamW
+  - Gradient clipping: max_norm=1.0
+
+### Deployment
+- **Backend**: Gradio web framework
+- **Model Hosting**: HuggingFace Hub
+- **API Integration**: Google Places API for restaurant data
+- **Inference**: PyTorch with CPU support
+
+## Repository Structure
 ```
 mood-based-restaurant-recommender/
+├── app.py                          # Gradio application interface
+├── inference.py                    # Model inference wrapper class
+├── requirements.txt                # Python dependencies
 ├── data/
-│   ├── raw/                    # Raw scraped reviews
-│   └── labeled/                # Synthetically labeled data
+│   └── labeled/
+│       └── labeled_reviews.json    # Training dataset (227 samples)
 ├── notebooks/
-│   ├── 01_data_collection.ipynb
-│   ├── 02_model_training.ipynb
-│   └── 03_model_evaluation.ipynb
-├── models/
-│   └── distilbert-mood-classifier/
-├── backend/
-│   ├── app.py                 # FastAPI application
-│   ├── inference.py           # Model inference logic
-│   └── requirements.txt
-├── frontend/
-│   └── (React application)
-├── scripts/
-│   ├── collect_reviews.py
-│   └── label_reviews.py
-├── .env.example
-├── .gitignore
-└── README.md
+│   ├── 02_model_training.ipynb     # Model training pipeline
+│   └── 03_model_evaluation.ipynb  # Performance analysis
+└── scripts/
+    ├── collect_reviews.py          # Google Places API scraper
+    └── label_reviews.py            # Groq API synthetic labeling
 ```
 
-## Setup Instructions
+## Dataset Statistics
+
+- **Total Reviews Collected**: 1,320 from 300 restaurants
+- **Labeled Reviews**: 560 via Groq API (1 hour processing time)
+- **Training Set**: 227 reviews after quality filtering
+- **Mood Distribution**:
+  - Celebration: 180 samples
+  - Date: 103 samples
+  - Quick Bite: 40 samples
+  - Budget: 37 samples
+
+## Installation & Usage
 
 ### Prerequisites
+- Python 3.11+
+- Google Places API key
+- HuggingFace account (for model access)
 
-- Python 3.8+
-- Node.js 16+
-- Google Cloud Platform account (for Places API)
-- Groq API key (for synthetic labeling)
+### Local Setup
 
-### Backend Setup
-
-1. Clone repository:
+1. Clone the repository:
 ```bash
 git clone https://github.com/Rohanjain2312/mood-based-restaurant-recommender.git
 cd mood-based-restaurant-recommender
 ```
 
-2. Create virtual environment:
+2. Install dependencies:
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
-3. Install dependencies:
+3. Configure environment variables:
 ```bash
-pip install -r backend/requirements.txt
+# Create .env file
+echo "GOOGLE_PLACES_API_KEY=your_api_key_here" > .env
 ```
 
-4. Create `.env` file:
+4. Run the application:
 ```bash
-cp .env.example .env
-# Add your API keys to .env
-```
-
-5. Run backend:
-```bash
-cd backend
 python app.py
 ```
 
-Backend will be available at `http://localhost:8000`
+5. Open browser at `http://localhost:7860`
 
-### Frontend Setup
-```bash
-cd frontend
-npm install
-npm start
-```
+### Using the Application
 
-Frontend will be available at `http://localhost:3000`
-
-## Data Collection
-
-Collect restaurant reviews from Google Places API:
-```bash
-python scripts/collect_reviews.py
-```
-
-This scrapes reviews from 5 major cities (NYC, Boston, SF, LA, Seattle) targeting restaurants with:
-- Rating > 3.9
-- User ratings > 50
-- Minimum 10 reviews
-
-## Synthetic Labeling
-
-Label collected reviews using Groq API:
-```bash
-python scripts/label_reviews.py
-```
-
-This uses `llama-3.1-8b-instant` to classify reviews into 7 mood categories with confidence scores.
+1. Select a city from the dropdown (30 major cities available)
+2. Choose a mood category (celebration, date, quick_bite, budget)
+3. Click "Find Restaurants" to get ranked recommendations
+4. Results display mood scores, ratings, and clickable Google Maps links
 
 ## Model Training
 
-Open `notebooks/02_model_training.ipynb` in Google Colab:
+To retrain the model:
 
-1. Upload notebook to Colab
-2. Clone this repository in Colab
-3. Run all cells to train DistilBERT classifier
-4. Download trained model from Google Drive
+1. Open `notebooks/02_model_training.ipynb` in Google Colab
+2. Upload the labeled dataset from `data/labeled/`
+3. Run all cells to train and save the model
+4. Download the trained model or push directly to HuggingFace Hub
 
-## Model Performance
+The notebook includes:
+- Data preprocessing and train/validation/test splitting
+- Custom DistilBERT architecture with multi-label classification head
+- Training loop with validation monitoring
+- Model checkpointing and metric logging
 
-| Mood | Precision | Recall | F1-Score |
-|------|-----------|--------|----------|
-| celebration | 1.00 | 0.83 | 0.91 |
-| quick_bite | 0.70 | 0.88 | 0.78 |
-| date | 0.78 | 0.47 | 0.58 |
-| budget | 0.40 | 0.57 | 0.47 |
+## API Reference
 
-**Overall:** Macro F1 = 0.69 | Micro F1 = 0.75
+### MoodClassifier Class
+```python
+from inference import MoodClassifier
 
-## API Documentation
+# Initialize classifier
+classifier = MoodClassifier('rohanjain2312/distilbert-mood-classifier')
 
-### Endpoints
+# Single review prediction
+result = classifier.predict_single("Great romantic atmosphere!")
+# Returns: {'celebration': 0.23, 'date': 0.87, 'quick_bite': 0.12, 'budget': 0.31}
 
-**GET /** - Health check
-```json
-{
-  "message": "Mood-Based Restaurant Recommender API",
-  "status": "healthy",
-  "version": "1.0.0"
-}
+# Batch prediction
+results = classifier.predict_batch([review1, review2, review3])
+
+# Aggregate mood score for restaurant
+score = classifier.aggregate_mood_scores(review_list, target_mood='date')
+# Returns: 8.7 (on 0-10 scale)
 ```
 
-**POST /recommend** - Get restaurant recommendations
+## Limitations
 
-Request:
-```json
-{
-  "latitude": 40.7580,
-  "longitude": -73.9855,
-  "mood": "date",
-  "radius": 3000,
-  "max_results": 10
-}
-```
-
-Response:
-```json
-{
-  "mood": "date",
-  "restaurants": [
-    {
-      "place_id": "ChIJ...",
-      "name": "Romantic Restaurant",
-      "address": "123 Main St",
-      "rating": 4.5,
-      "user_ratings_total": 250,
-      "mood_score": 8.7,
-      "is_open": true,
-      "price_level": 3,
-      "types": ["restaurant", "food"]
-    }
-  ],
-  "total_found": 15
-}
-```
-
-## Deployment
-
-### Backend (Heroku)
-```bash
-heroku create mood-restaurant-api
-git push heroku main
-heroku config:set GOOGLE_PLACES_API_KEY=your_key
-```
-
-### Frontend (Vercel)
-```bash
-vercel deploy
-```
-
-### Model (HuggingFace)
-```bash
-huggingface-cli login
-huggingface-cli upload Rohanjain2312/distilbert-mood-classifier models/distilbert-mood-classifier/
-```
+- Google Places API returns maximum 5 reviews per restaurant
+- Model performance varies by mood category due to class imbalance
+- Requires minimum 3 reviews per restaurant for scoring
+- Limited to 30 predefined cities (no arbitrary location support in current version)
 
 ## Future Improvements
 
-- [ ] Add user preference learning (collaborative filtering)
-- [ ] Implement caching for frequent queries
-- [ ] Add more mood categories
-- [ ] Support cuisine-specific filtering
-- [ ] Multi-language support
-- [ ] Mobile app (React Native)
+- Implement FastAPI + React frontend for geolocation support
+- Expand training dataset with web scraping from additional review platforms
+- Add more mood categories (family-friendly, work meetings, etc.)
+- Implement user feedback loop for model refinement
+- Add multilingual support for international cities
 
-## Contributing
+## Links
 
-Pull requests welcome. For major changes, open an issue first.
+- **Live Demo**: [HuggingFace Spaces](https://huggingface.co/spaces/rohanjain2312/restaurant-mood-recommender)
+- **Model**: [HuggingFace Hub](https://huggingface.co/rohanjain2312/distilbert-mood-classifier)
+- **Training Notebooks**: [GitHub](https://github.com/Rohanjain2312/mood-based-restaurant-recommender/tree/main/notebooks)
+
+## Author
+
+**Rohan Jain**  
+Master's in Applied Machine Learning, University of Maryland (Expected 2026)  
+Former BI Associate at Goldman Sachs
+
+- LinkedIn: [linkedin.com/in/jaroh23](https://www.linkedin.com/in/jaroh23/)
+- GitHub: [github.com/Rohanjain2312](https://github.com/Rohanjain2312)
+- HuggingFace: [huggingface.co/rohanjain2312](https://huggingface.co/rohanjain2312)
+
+## Acknowledgments
+
+- Google Places API for restaurant data and review access
+- Groq API (Llama 3.1) for efficient synthetic labeling
+- Anthropic Claude for development assistance and code optimization
+- HuggingFace for model hosting and deployment infrastructure
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Contact
+## Citation
 
-Rohan Jain - [GitHub](https://github.com/Rohanjain2312) | [LinkedIn](https://linkedin.com/in/rohanjain2312)
-
-Project Link: https://github.com/Rohanjain2312/mood-based-restaurant-recommender
+If you use this project in your research or application, please cite:
+```bibtex
+@software{jain2026mood,
+  author = {Jain, Rohan},
+  title = {Mood-Based Restaurant Recommender},
+  year = {2026},
+  url = {https://github.com/Rohanjain2312/mood-based-restaurant-recommender}
+}
 ```
-
-**Create `.env.example`:**
-```
-# Google Places API
-GOOGLE_PLACES_API_KEY=your_google_places_api_key_here
-
-# Groq API (for synthetic labeling)
-GROQ_API_KEY=your_groq_api_key_here
-
-# Model settings
-MODEL_PATH=models/distilbert-mood-classifier
-
-# API settings
-API_HOST=0.0.0.0
-API_PORT=8000
