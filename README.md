@@ -2,11 +2,18 @@
 
 A machine learning application that analyzes restaurant reviews to recommend venues matching specific dining moods using a fine-tuned DistilBERT model.
 
-**Live Demo**: [HuggingFace Spaces](https://huggingface.co/spaces/rohanjain2312/restaurant-mood-recommender)
+## Links
 
-## Overview
+- **Live Demo**: [HuggingFace Spaces](https://huggingface.co/spaces/rohanjain2312/restaurant-mood-recommender)
+- **Model**: [HuggingFace Hub](https://huggingface.co/rohanjain2312/distilbert-mood-classifier)
+- **Training Notebooks**: [GitHub](https://github.com/Rohanjain2312/mood-based-restaurant-recommender/tree/main/notebooks)
 
-This project addresses the challenge of finding restaurants that match specific dining intentions beyond traditional filters like cuisine or price. By fine-tuning a DistilBERT model on restaurant reviews, the system can identify venues suitable for celebrations, romantic dates, quick meals, or budget-friendly dining.
+### Using the Application
+
+1. Select a city from the dropdown (30 major cities available)
+2. Choose a mood category (celebration, date, quick_bite, budget)
+3. Click "Find Restaurants" to get ranked recommendations
+4. Results display mood scores, ratings, and clickable Google Maps links
 
 ## Key Features
 
@@ -115,12 +122,6 @@ python app.py
 
 5. Open browser at `http://localhost:7860`
 
-### Using the Application
-
-1. Select a city from the dropdown (30 major cities available)
-2. Choose a mood category (celebration, date, quick_bite, budget)
-3. Click "Find Restaurants" to get ranked recommendations
-4. Results display mood scores, ratings, and clickable Google Maps links
 
 ## Model Training
 
@@ -173,11 +174,6 @@ score = classifier.aggregate_mood_scores(review_list, target_mood='date')
 - Implement user feedback loop for model refinement
 - Add multilingual support for international cities
 
-## Links
-
-- **Live Demo**: [HuggingFace Spaces](https://huggingface.co/spaces/rohanjain2312/restaurant-mood-recommender)
-- **Model**: [HuggingFace Hub](https://huggingface.co/rohanjain2312/distilbert-mood-classifier)
-- **Training Notebooks**: [GitHub](https://github.com/Rohanjain2312/mood-based-restaurant-recommender/tree/main/notebooks)
 
 ## Author
 
